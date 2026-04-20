@@ -27,8 +27,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 function subscribe(fn: () => void) {
   return authStore.subscribe(fn);
 }
-function getSnapshot(): readonly [string | null, Me | null] {
-  return [authStore.getToken(), authStore.getUser()];
+function getSnapshot() {
+  return authStore.getSnapshot();
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

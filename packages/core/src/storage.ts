@@ -22,10 +22,13 @@ const USER_KEY = 'stocktrace.me';
  * Call `hydrate()` once at app start (before rendering) to populate the
  * in-memory state from disk.
  */
+export type AuthSnapshot = readonly [token: string | null, user: Me | null];
+
 export class AuthStore {
   private token: string | null = null;
   private user: Me | null = null;
   private listeners = new Set<() => void>();
+  private snapshot: AuthSnapshot = [null, null];
 
   constructor(private readonly storage: PersistentStorage) {}
 
@@ -36,6 +39,7 @@ export class AuthStore {
     ]);
     this.token = rawToken;
     this.user = rawUser ? this.parseUser(rawUser) : null;
+    this.snapshot = [this.token, this.user];
     this.emit();
   }
 
@@ -47,9 +51,20 @@ export class AuthStore {
     return this.user;
   }
 
+  /**
+   * Reference-stable snapshot of the current auth state. A new tuple is
+   * allocated only when the token or user actually changes, so consumers like
+   * `useSyncExternalStore` (which compares snapshots with `Object.is`) won't
+   * loop forever.
+   */
+  getSnapshot(): AuthSnapshot {
+    return this.snapshot;
+  }
+
   async set(token: string, user: Me): Promise<void> {
     this.token = token;
     this.user = user;
+    this.snapshot = [token, user];
     await Promise.all([
       this.storage.setItem(TOKEN_KEY, token),
       this.storage.setItem(USER_KEY, JSON.stringify(user)),
@@ -59,6 +74,7 @@ export class AuthStore {
 
   async setUser(user: Me): Promise<void> {
     this.user = user;
+    this.snapshot = [this.token, user];
     await this.storage.setItem(USER_KEY, JSON.stringify(user));
     this.emit();
   }
@@ -66,6 +82,7 @@ export class AuthStore {
   async clear(): Promise<void> {
     this.token = null;
     this.user = null;
+    this.snapshot = [null, null];
     await Promise.all([this.storage.removeItem(TOKEN_KEY), this.storage.removeItem(USER_KEY)]);
     this.emit();
   }
