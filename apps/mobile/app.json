@@ -8,6 +8,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -15,7 +18,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "in.stocktrace.mobile"
+      "bundleIdentifier": "in.stocktrace.app",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +28,12 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "in.stocktrace.mobile"
+      "package": "in.stocktrace.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -37,7 +46,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiBaseUrl": "http://localhost:8080"
+      "eas": {
+        "projectId": "PLACEHOLDER_SET_VIA_EAS_INIT"
+      }
     }
   }
 }
