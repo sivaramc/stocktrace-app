@@ -11,14 +11,14 @@ const config = getDefaultConfig(projectRoot);
 config.watchFolders = [workspaceRoot];
 
 // Resolve modules against both the app's node_modules and the workspace root's
-// node_modules (so hoisted deps are found).
+// node_modules (so hoisted deps are found). Hierarchical lookup is left enabled
+// so Metro can find nested deps like react-native-reanimated's own copy of
+// `semver` (used by its worklets-version validator on web).
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// Disable hoisting-related symlink confusion; Metro 0.80+ handles this well,
-// but disabling hierarchical lookup prevents picking up unrelated node_modules.
-config.resolver.disableHierarchicalLookup = true;
+
 
 module.exports = config;
